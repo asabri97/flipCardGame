@@ -37,16 +37,30 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
      func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
         // Get a cell
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CardCell", for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CardCell", for: indexPath) as! CardCollectionViewCell
 
         // Configure cell
-
+        let card = cardsArray[indexPath.row]
+        cell.configureCell(card: card)
 
         // return cell
         return cell
      }
 
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
+        // Refernce to the cell that was tapped
+        let cell = collectionView.cellForItem(at: indexPath) as? CardCollectionViewCell
+
+        // Check the card status
+        if cell?.card?.isFlipped == false {
+            cell?.flipUp()
+        }
+        else {
+            cell?.flipDown()
+        }
+
+    }
 
 }
 
