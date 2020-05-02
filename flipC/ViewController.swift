@@ -15,6 +15,8 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     let model = CardModel()
     var cardsArray = [Card]()
 
+    var firstCardFlippedIndex:IndexPath?
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -32,9 +34,9 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
 
         //return number of cards
         return cardsArray.count
-     }
+    }
 
-     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
         // Get a cell
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CardCell", for: indexPath) as! CardCollectionViewCell
@@ -45,7 +47,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
 
         // return cell
         return cell
-     }
+    }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
@@ -55,11 +57,53 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         // Check the card status
         if cell?.card?.isFlipped == false {
             cell?.flipUp()
-        }
-        else {
-            cell?.flipDown()
+
+            // check if it's first card
+            if firstCardFlippedIndex == nil {
+                firstCardFlippedIndex = indexPath
+            }
+
+
+            else {
+
+                // if second card is flipped, run comparison logic
+                checkForMatch(indexPath)
+            }
+
         }
 
+    }
+
+    // MARK: - Card Game Logic methods
+
+    func checkForMatch(_ secondCardFlippedIndex:IndexPath) {
+
+        // Two card objects with indices to check if they match
+        let cardOne = cardsArray[firstCardFlippedIndex!.row]
+        let cardTwo = cardsArray[secondCardFlippedIndex.row]
+
+        let cellCardOne = collectionView.cellForItem(at: firstCardFlippedIndex!) as? CardCollectionViewCell
+        let cellCardTwo = collectionView.cellForItem(at: secondCardFlippedIndex) as? CardCollectionViewCell
+
+        // Compare the two cards
+        if cardOne.imageName == cardTwo.imageName {
+            // Set the status
+            cardOne.isMatched = true
+            cardTwo.isMatched = true
+
+            // Remove the cards
+            cellCardOne?.remove()
+            cellCardTwo?.remove()
+        }
+
+        else {
+            // flip the cards back
+            cellCardOne?.flipDown()
+            cellCardTwo?.flipDown()
+        }
+
+        // Reset the firstCardFlipped property
+        firstCardFlippedIndex = nil
     }
 
 }
