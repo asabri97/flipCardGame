@@ -55,7 +55,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         let cell = collectionView.cellForItem(at: indexPath) as? CardCollectionViewCell
 
         // Check the card status
-        if cell?.card?.isFlipped == false {
+        if cell?.card?.isFlipped == false && cell?.card?.isMatched == false {
             cell?.flipUp()
 
             // check if it's first card
